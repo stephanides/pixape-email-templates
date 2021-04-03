@@ -30,8 +30,8 @@
           <mj-text>Vážení,</mj-text>
           <mj-text line-height="20px"
             >děkujeme, že jste registrováni na portálu
-            <a href="www.exdrazby.cz">www.exdrazby.cz</a> a přinášíme Vám
-            aktuální nabídku dražeb na našem portálu.</mj-text
+            <a href="{{ WEB_URL }}">www.exdrazby.cz</a> a přinášíme Vám aktuální
+            nabídku dražeb na našem portálu.</mj-text
           >
         </mj-column>
       </mj-section>
@@ -47,13 +47,13 @@
           </mj-text>
         </mj-column>
       </mj-section>
-      <mj-raw>{{#each auction as |item index|}}</mj-raw>
+      <mj-raw>{% for item in auctions %}</mj-raw>
       <mj-section padding-bottom="40px">
         <mj-column width="40%"
           ><mj-image
             border="none"
             align="left"
-            src="{{item.image}}"
+            src="{{ item.getAuctionMainImageUrl }}"
             fluid-on-mobile="true"
           ></mj-image>
         </mj-column>
@@ -64,25 +64,34 @@
             padding-bottom="16px"
             padding-top="10px"
           >
-            {{item.title}}
+            {{ item.title }}
+          </mj-text>
+          <mj-raw>{% if item.type %}</mj-raw>
+          <mj-text padding-bottom="0" padding-top="10px">
+            <strong>Typ:</strong> {{ item.typeTranslation }}
+          </mj-text>
+          <mj-raw>{% else %}</mj-raw>
+          <mj-text padding-bottom="0" padding-top="10px">
+            <strong>Typ:</strong> Není typ
+          </mj-text>
+          <mj-raw>{% endif %}</mj-raw>
+          <mj-text padding-bottom="0" padding-top="10px">
+            <strong>{{ item.auctionCategory.title }}:</strong> čj: {{
+            item.number }}
           </mj-text>
           <mj-text padding-bottom="0" padding-top="10px">
-            <strong>Typ:</strong> {{item.type}}
+            <strong>Kraj:</strong> {{ item.auctionAddress.region.name }}
           </mj-text>
           <mj-text padding-bottom="0" padding-top="10px">
-            <strong>{{item.auctionCategory}}:</strong> čj: {{item.number}}
+            <strong>Dražební jistota:</strong> {{item.minimalThrow }}
           </mj-text>
           <mj-text padding-bottom="0" padding-top="10px">
-            <strong>Kraj:</strong> {{item.auctionAdress.region.name}}
+            <strong>Dražba začne:</strong> {{ item.startDt|date('d.m.Y H:i:s')
+            }}
           </mj-text>
           <mj-text padding-bottom="0" padding-top="10px">
-            <strong>Dražební jistota:</strong> {{item.auctionCaution}}
-          </mj-text>
-          <mj-text padding-bottom="0" padding-top="10px">
-            <strong>Dražba začne:</strong> {{item.startDt}}
-          </mj-text>
-          <mj-text padding-bottom="0" padding-top="10px">
-            <strong>Dražba bude končit:</strong> {{item.endDt}}
+            <strong>Dražba bude končit:</strong> {{ item.endDt|date('d.m.Y
+            H:i:s') }}
           </mj-text>
           <mj-divider
             border-width="1px"
@@ -103,7 +112,7 @@
                 "
                 align="left"
               >
-                {{item.price}}
+                {{ item.minimalBid }}
               </td>
               <td></td>
               <td align="right">
@@ -121,8 +130,9 @@
                     font-size: 14px;
                     cursor: pointer;
                     white-space: nowrap;
+                    text-decoration: none;
                   "
-                  href="{{item.url}}"
+                  href="{{ auctionService.auctionPublicUrl(item) }}"
                   >Více informací</a
                 >
               </td>
@@ -130,7 +140,7 @@
           >
         </mj-column>
       </mj-section>
-      <mj-raw>{{/each}}</mj-raw>
+      <mj-raw>{% endfor %}</mj-raw>
     </mj-wrapper>
   </mj-body>
 </mjml>
